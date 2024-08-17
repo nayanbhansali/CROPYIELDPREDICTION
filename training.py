@@ -7,7 +7,7 @@ from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor, AdaBoostRegressor
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.svm import SVR
-import pickle
+import joblib
 import numpy as np
 
 # Load the dataset
@@ -40,7 +40,6 @@ lr_model.fit(X_train_scaled, y_train)
 y_pred_lr = lr_model.predict(X_test_scaled)
 rmse_lr = np.sqrt(mean_squared_error(y_test, y_pred_lr))
 r2_lr = r2_score(y_test, y_pred_lr)
-#print(f'Linear Regression - RMSE: {rmse_lr}, R²: {r2_lr}')
 
 # Decision Tree
 dt_model = DecisionTreeRegressor(random_state=42)
@@ -48,7 +47,6 @@ dt_model.fit(X_train_scaled, y_train)
 y_pred_dt = dt_model.predict(X_test_scaled)
 rmse_dt = np.sqrt(mean_squared_error(y_test, y_pred_dt))
 r2_dt = r2_score(y_test, y_pred_dt)
-#print(f'Decision Tree - RMSE: {rmse_dt}, R²: {r2_dt}')
 
 # Random Forest
 rf_model = RandomForestRegressor(random_state=42)
@@ -56,7 +54,6 @@ rf_model.fit(X_train_scaled, y_train)
 y_pred_rf = rf_model.predict(X_test_scaled)
 rmse_rf = np.sqrt(mean_squared_error(y_test, y_pred_rf))
 r2_rf = r2_score(y_test, y_pred_rf)
-#print(f'Random Forest - RMSE: {rmse_rf}, R²: {r2_rf}')
 
 # Gradient Boosting
 gb_model = GradientBoostingRegressor(random_state=42)
@@ -64,7 +61,6 @@ gb_model.fit(X_train_scaled, y_train)
 y_pred_gb = gb_model.predict(X_test_scaled)
 rmse_gb = np.sqrt(mean_squared_error(y_test, y_pred_gb))
 r2_gb = r2_score(y_test, y_pred_gb)
-#print(f'Gradient Boosting - RMSE: {rmse_gb}, R²: {r2_gb}')
 
 # AdaBoost
 ab_model = AdaBoostRegressor(random_state=42)
@@ -72,7 +68,6 @@ ab_model.fit(X_train_scaled, y_train)
 y_pred_ab = ab_model.predict(X_test_scaled)
 rmse_ab = np.sqrt(mean_squared_error(y_test, y_pred_ab))
 r2_ab = r2_score(y_test, y_pred_ab)
-#print(f'AdaBoost - RMSE: {rmse_ab}, R²: {r2_ab}')
 
 # K-Nearest Neighbors
 knn_model = KNeighborsRegressor()
@@ -80,7 +75,6 @@ knn_model.fit(X_train_scaled, y_train)
 y_pred_knn = knn_model.predict(X_test_scaled)
 rmse_knn = np.sqrt(mean_squared_error(y_test, y_pred_knn))
 r2_knn = r2_score(y_test, y_pred_knn)
-#print(f'K-Nearest Neighbors - RMSE: {rmse_knn}, R²: {r2_knn}')
 
 # Support Vector Machine
 svm_model = SVR()
@@ -88,7 +82,6 @@ svm_model.fit(X_train_scaled, y_train)
 y_pred_svm = svm_model.predict(X_test_scaled)
 rmse_svm = np.sqrt(mean_squared_error(y_test, y_pred_svm))
 r2_svm = r2_score(y_test, y_pred_svm)
-#print(f'Support Vector Machine - RMSE: {rmse_svm}, R²: {r2_svm}')
 
 # Collecting results
 results = {
@@ -100,7 +93,6 @@ results = {
     'K-Nearest Neighbors': (rmse_knn, r2_knn),
     'Support Vector Machine': (rmse_svm, r2_svm)
 }
-
 
 # Finding and saving the best model
 best_model_name = min(results, key=lambda x: results[x][0])
@@ -114,11 +106,10 @@ best_model = {
     'Support Vector Machine': svm_model
 }[best_model_name]
 
-with open('best_model.pkl', 'wb') as file:
-    pickle.dump(best_model, file)
+# Save the best model with joblib
+joblib.dump(best_model, 'best_model.joblib')
 
 print(f'The best model is {best_model_name} with RMSE: {results[best_model_name][0]} and R²: {results[best_model_name][1]}')
 
-# Save the label encoders
-with open('label_encoders.pkl', 'wb') as file:
-    pickle.dump(label_encoders, file)
+# Save the label encoders with joblib
+joblib.dump(label_encoders, 'label_encoders.joblib')

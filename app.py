@@ -1,16 +1,12 @@
 from flask import Flask, request, jsonify, render_template
-import pickle
+import joblib
 import numpy as np
-import pandas as pd
 
 app = Flask(__name__)
 
 # Load the model and label encoders
-with open('best_model.pkl', 'rb') as file:
-    best_model = pickle.load(file)
-
-with open('label_encoders.pkl', 'rb') as file:
-    label_encoders = pickle.load(file)
+best_model = joblib.load('best_model.joblib')
+label_encoders = joblib.load('label_encoders.joblib')
 
 # Define crop types for selection
 CROP_TYPES = [
