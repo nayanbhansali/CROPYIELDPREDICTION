@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Yield Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-top: 20px;
+        }
+        form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .form-group input[type="submit"] {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 10px 15px;
+        }
+        .form-group input[type="submit"]:hover {
+            background-color: #218838;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Crop Yield Prediction</h1>
+        <form id="predictionForm" method="post" action="/predict">
+            <div class="form-group">
+                <label for="crop">Crop Type:</label>
+                <select id="crop" name="crop" required>
+                    {% for crop in crop_types %}
+                        <option value="{{ crop }}">{{ crop }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="area">Area (in hectares):</label>
+                <input type="number" id="area" name="area" step="0.01" required>
+            </div>
+            <div class="form-group">
+                <label for="production">Production (in metric tons):</label>
+                <input type="number" id="production" name="production" step="0.01" required>
+            </div>
+            <div class="form-group">
+                <label for="annual_rainfall">Annual Rainfall (in mm):</label>
+                <input type="number" id="annual_rainfall" name="annual_rainfall" step="0.01" required>
+            </div>
+            <div class="form-group">
+                <label for="fertilizer">Fertilizer (kg/ha):</label>
+                <input type="number" id="fertilizer" name="fertilizer" step="0.01" required>
+            </div>
+            <div class="form-group">
+                <label for="pesticide">Pesticide (kg/ha):</label>
+                <input type="number" id="pesticide" name="pesticide" step="0.01" required>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Predict">
+            </div>
+        </form>
+        <div id="result" class="result"></div>
+    </div>
+    <script>
+        document.getElementById('predictionForm').onsubmit = async function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(event.target);
+            const response = await fetch('/predict', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                if (result.error) {
+                    document.getElementById('result').innerText = 'Error: ' + result.error;
+                } else {
+                    document.getElementById('result').innerText = 'Predicted Yield: ' + result.prediction;
+                }
+            } else {
+                document.getElementById('result').innerText = 'Failed to get prediction. Please try again.';
+            }
+        }
+    </script>
+</body>
+</html>
