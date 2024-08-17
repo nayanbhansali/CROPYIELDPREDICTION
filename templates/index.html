@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Yield Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .form-group input[type="submit"] {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .form-group input[type="submit"]:hover {
+            background-color: #218838;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Crop Yield Prediction</h1>
+        <form id="predictionForm" method="post" action="/predict">
+            <div class="form-group">
+                <label for="crop">Crop Type:</label>
+                <select id="crop" name="crop" required>
+                    {% for crop in crop_types %}
+                        <option value="{{ crop }}">{{ crop }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="area">Area:</label>
+                <input type="number" id="area" name="area" step="0.01" required>
+            </div>
+            <div class="form-group">
+                <label for="production">Production:</label>
+                <input type="number" id="production" name="production" step="0.01" required>
+            </div>
+            <div class="form-group">
+                <label for="annual_rainfall">Annual Rainfall:</label>
+                <input type="number" id="annual_rainfall" name="annual_rainfall" step="0.01" required>
+            </div>
+            <div class="form-group">
+                <label for="fertilizer">Fertilizer:</label>
+                <input type="number" id="fertilizer" name="fertilizer" step="0.01" required>
+            </div>
+            <div class="form-group">
+                <label for="pesticide">Pesticide:</label>
+                <input type="number" id="pesticide" name="pesticide" step="0.01" required>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Predict">
+            </div>
+        </form>
+        <div id="result" class="result"></div>
+    </div>
+    <script>
+        document.getElementById('predictionForm').onsubmit = async function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(event.target);
+            const response = await fetch('/predict', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+            document.getElementById('result').innerText = 'Predicted Yield: ' + result.prediction;
+        }
+    </script>
+</body>
+</html>
